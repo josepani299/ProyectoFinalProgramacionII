@@ -3,11 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.proyectofinalprogramacionii.Modelos;
+import java.time.LocalDate;
 
-/**
- *
- * @author Usuario
- */
+
 public class Jugador {
+    private String nombre;
+    private LocalDate fecha;
+    
     
 }
