@@ -4,11 +4,17 @@
  */
 package com.mycompany.proyectofinalprogramacionii.Modelos;
 import java.time.LocalDate;
+import com.mycompany.proyectofinalprogramacionii.Modelos.Equipo;
 
 
 public class Jugador {
     private String nombre;
+    private String apellido;
+    private String tag;
     private LocalDate fecha;
+    private Equipo equipo;
+    private double precio;
+    
     
     
 }
