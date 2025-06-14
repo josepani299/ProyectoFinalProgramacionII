@@ -4,10 +4,8 @@
  */
 package com.mycompany.proyectofinalprogramacionii.Controlador;
 
-/**
- *
- * @author Usuario
- */
+
 public class Controlador {
+    
     
 }
