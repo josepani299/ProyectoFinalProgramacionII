@@ -83,7 +83,15 @@ public class Equipo {
         }
     }
     
+    //metodo para agregar jugaro a la lista
+    public void agregarJugador(Jugador jugador){
+        jugadoresEquipo.add(jugador);
+    }
     
+    // Metodo para agregarTorneosJugador
+    public void agregarTorneoJugado(Torneo torneo){
+        torneosJugados.add(torneo);
+    }
     
     
     
