@@ -8,7 +8,7 @@ package com.mycompany.proyectofinalprogramacionii;
  *
  * @author Usuario
  */
-public class ProyectoFinalProgramacionII {
+public class Main {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
