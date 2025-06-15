@@ -9,6 +9,7 @@ public class Vista {
     public void menu(){
         System.out.println("menu");
         // falta llenar con algunas cosas
+        System.out.println("Ingresa 1 para poder probar la bd");
     }
    // creamos una instancia de la clase Scanner
     Scanner sc = new Scanner(System.in);

@@ -4,13 +4,15 @@
 
 package com.mycompany.proyectofinalprogramacionii;
 
-/**
- *
- * @author Usuario
- */
+import com.mycompany.proyectofinalprogramacionii.Controlador.Controlador;
+import com.mycompany.proyectofinalprogramacionii.Vista.Vista;
+
+
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Vista vista = new Vista();
+        Controlador controlador = new Controlador(vista);
+        controlador.menu();
     }
 }
