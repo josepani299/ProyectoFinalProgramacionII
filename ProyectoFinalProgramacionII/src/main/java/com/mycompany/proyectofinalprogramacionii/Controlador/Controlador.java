@@ -10,11 +10,11 @@ import com.mycompany.proyectofinalprogramacionii.Vista.Vista;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 
 
 public class Controlador {
@@ -37,7 +37,7 @@ public class Controlador {
                     guardarEquiposEnMysql();
                     break;
                 case 3:
-                  
+                    mostrarEquipoGuardados();
                     break;
                 case 4:
                    
@@ -84,6 +84,8 @@ public class Controlador {
         
     }
     
+    // Creamos el metodo para crear la tabla equipo en la base de datos
+    
     public void crearTablaEquipoEnMySql(){
         try {
         //vinculamos el archivo de java con la base de datos inventario.
@@ -108,6 +110,7 @@ public class Controlador {
     }
     }
     
+    // Creamos el metodo para guardar los equipos en la base de datos
     
     public void guardarEquiposEnMysql(){
         try{
@@ -131,10 +134,34 @@ public class Controlador {
             System.out.println("Error: " + e.getMessage());
         }
     }
+    
+    // Creamos el metodo para mostrar los equipos guardados en la base de datos
+
+    public void mostrarEquipoGuardados(){
+        try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+
+        String sql = "SELECT * FROM equipo";  // también podés poner solo "categoria"
+        ResultSet rs = stmt.executeQuery(sql);
+
+        System.out.println("Listado de equipos:");
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            Date fecha = rs.getDate("fecha");
+            String coach = rs.getString("coach");
+            int cantidad = rs.getInt("cantidadGanados");
+            System.out.println("ID Equipo: " + id + ",  Nombre: " + nombre + ", Fecha Creacion : " + fecha + ", Nombre coach: "+ coach + " Cantidad Ganados: "+ cantidad);
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+    } catch (Exception e) {
+        System.out.println("Error al mostrar las categorías: " + e.getMessage());
     }
-    
-    
-  
-    
-    
+    }
+
+}
+
 
