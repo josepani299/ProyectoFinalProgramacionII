@@ -5,6 +5,7 @@
 package com.mycompany.proyectofinalprogramacionii.Controlador;
 import com.mycompany.proyectofinalprogramacionii.Modelos.Equipo;
 import com.mycompany.proyectofinalprogramacionii.Modelos.Jugador;
+import com.mycompany.proyectofinalprogramacionii.Modelos.Mapa;
 import com.mycompany.proyectofinalprogramacionii.Modelos.Torneo;
 import com.mycompany.proyectofinalprogramacionii.Vista.Vista;
 import java.sql.Connection;
@@ -22,6 +23,7 @@ public class Controlador {
     private List<Torneo> torneos = new ArrayList<>();
     private List<Equipo> equipos = new ArrayList<>();
     private List<Jugador> jugadores = new ArrayList<>();
+    private List<Mapa> mapas = new ArrayList<>(); 
     // falta crear las listas de Rol, mapas, personajes
     
     public void menu() {
@@ -40,6 +42,8 @@ public class Controlador {
                     mostrarEquipoGuardados();
                     break;
                 case 4:
+                    
+
                    
                     break;
                 case 5:
@@ -49,6 +53,8 @@ public class Controlador {
                     
                     break;
                 case 7:
+                    crearMapa();
+
                     
                     break;
             }
@@ -161,7 +167,33 @@ public class Controlador {
         System.out.println("Error al mostrar las categorías: " + e.getMessage());
     }
     }
+    
+    // Creo el metodo para agregar equipos
+    
+    public void crearMapa(){
+    vista.mostrarTexto("Ingrese nombre del mapa");
+    String nombre = vista.pedirString();
+    vista.mostrarTexto("Ingrese lado favorable del mapa : Atacante/Defensivo");
+    String favorable = vista.pedirString();
+    vista.mostrarTexto("Ingrese cantidad de sites: ");
+    String cantidadSites = vista.pedirString();
+    vista.mostrarTexto("Ingrese descripcion del mapa: ");
+    String descripcion = vista.pedirString();
+    
+    //metodo para agregar mapa
+    Mapa m = new Mapa(nombre,favorable,cantidadSites,descripcion);
+    mapas.add(m);
+    vista.mostrarTexto("Se agrego mapa.");
+    
+    // Creamo  el metodo para crear tabla mapa en base de datos
+    
 
+    
+     
+    
+    
+    
+    }
 }
 
 
