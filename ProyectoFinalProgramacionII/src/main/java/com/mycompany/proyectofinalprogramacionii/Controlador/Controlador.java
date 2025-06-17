@@ -47,7 +47,7 @@ public class Controlador {
                     mostrarEquipoGuardados();
                     break;
                 case 4:
-                   
+                    crearJugador();
                     break;
                 case 5:
                    
@@ -207,7 +207,42 @@ public class Controlador {
         
         
     }
-
+    
+    
+    
+    // Creamos el metodo para crear jugadores y guardalo en la lista.
+    public void crearJugador(){
+        
+        vista.mostrarTexto("Ingrese el nombre del Jugador");
+        String nombre= vista.pedirString();
+        vista.mostrarTexto("Ingrese el apellido del jugador");
+        String apellido = vista.pedirString();
+        vista.mostrarTexto("Ingrese el tag del jugador");
+        String tag = vista.pedirString();
+        vista.mostrarTexto("Ingrese la fecha de alta del jugador aa-mm-dd");
+        String fecha =vista.pedirString();
+        vista.mostrarTexto("Ingrese el precio del jugador");
+        double precio = vista.pedirDouble();
+        vista.mostrarTexto("Ingrese la cantidad de kills del jugador");
+        int kills = vista.pedirInt();
+        vista.mostrarTexto("Ingrese el numero de asistensias");
+        int asistencia = vista.pedirInt();
+        vista.mostrarTexto("Ingrese el numero de muertes registradas");
+        int dead = vista.pedirInt();
+       
+        
+        LocalDate fechaCreacion = LocalDate.parse(fecha);
+        
+        //Creamos el objeto jugador y  lo agregamos a la lista de equipos
+        Jugador j = new Jugador(nombre,apellido,tag,fechaCreacion,precio,kills,asistencia,dead);
+        jugadores.add(j);
+        vista.mostrarTexto("Se agrego el jugador "+ j.getNombre() + " a la lista de jugadores");
+        
+    }
+    
+    //Creamos el metodo para mostrar jugadores de la lista
+    
+    
 }
 
 

@@ -12,6 +12,7 @@ public class Vista {
         System.out.println("[1] Registra un Equipo");
         System.out.println("[2] Guardar Equipos cargados en la base de datos");
         System.out.println("[3] Mostrar Equipos guardados en la base de datos");
+        System.out.println("[4] Registrar Jugador");
     }
    // creamos una instancia de la clase Scanner
     Scanner sc = new Scanner(System.in);
@@ -38,5 +39,9 @@ public class Vista {
         }
     }
     
-    //
+    // Metodo para poder pedir que ingrese un dato del tipo entero.
+    public double pedirDouble(){
+        return sc.nextDouble();
+    }
+    
 }
