@@ -15,6 +15,7 @@ public class Jugador {
     private Equipo equipo;
     private double precio;
     
+    }
+   
     
     
-}

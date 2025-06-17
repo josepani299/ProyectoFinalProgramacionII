@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -23,6 +24,12 @@ public class Controlador {
     private List<Equipo> equipos = new ArrayList<>();
     private List<Jugador> jugadores = new ArrayList<>();
     // falta crear las listas de Rol, mapas, personajes
+
+    public List<Equipo> getEquipos() {
+        return equipos;
+    }
+    
+    
     
     public void menu() {
         int opcion;
@@ -95,15 +102,16 @@ public class Controlador {
         Statement stmt = con.createStatement();
         
         String tablaEquipo = "CREATE TABLE IF NOT EXISTS Equipo (" +
-                     "id  PRIMARY KEY AUTO_INCREMENT, " +
+                     "id int PRIMARY KEY AUTO_INCREMENT, " +
                      "nombre VARCHAR(50) unique not null," +
+                     "pais varchar(50) not null,"+
                      "fecha Date not null,"+
                      "coach Varchar(50) not null,"+
                      "cantidadGanados int not null)";
         
         stmt.executeUpdate(tablaEquipo);
         con.close();
-        System.out.println("Tabla creada correctamente.");
+        
 
     } catch (Exception e) {
         System.out.println("Error: " + e.getMessage());
@@ -115,14 +123,15 @@ public class Controlador {
     public void guardarEquiposEnMysql(){
         try{
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
-            String mysql = "INSERT INTO EQUIPO (nombre, fecha,coach,cantidadGanados) VALUES (?,?,?,?)";
+            String mysql = "INSERT IGNORE INTO EQUIPO (nombre,pais,fecha,coach,cantidadGanados) VALUES (?,?,?,?,?)";
             PreparedStatement ps = con.prepareStatement(mysql);
         
         for (Equipo e : equipos) {
             ps.setString(1, e.getNombre());
-            ps.setDate(2, java.sql.Date.valueOf(e.getFechaCreacion()));
-            ps.setString(3, e.getCoach());
-            ps.setInt(4,e.getCantidadDeTorenoGanadador());
+            ps.setString(2,e.getPais());
+            ps.setDate(3, java.sql.Date.valueOf(e.getFechaCreacion()));
+            ps.setString(4, e.getCoach());
+            ps.setInt(5,e.getCantidadDeTorenoGanadador());
             ps.executeUpdate();
         }
 
@@ -160,6 +169,43 @@ public class Controlador {
     } catch (Exception e) {
         System.out.println("Error al mostrar las categorías: " + e.getMessage());
     }
+    }
+    
+    // Creamos el metodo para que la informacion de los equipos de la base de datos siempre ente cuando se ejecute el programa
+    
+    public void traerEquiposBD(List<Equipo> equipos){
+       try
+       {
+        vista.mostrarTexto("Iniciando sistema");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+
+        String sql = "SELECT * FROM equipo";  
+        ResultSet rs = stmt.executeQuery(sql);
+
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String pais = rs.getString("pais");
+            Date fecha = rs.getDate("fecha");
+            String coach = rs.getString("coach");
+            int cantidadGanados = rs.getInt("cantidadGanados");
+            LocalDate fechaLD = fecha.toLocalDate();
+            
+            Equipo e = new Equipo(nombre,pais,fechaLD,coach,cantidadGanados);
+            equipos.add(e);
+            
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        vista.mostrarTexto("El sistema s einicio correctamente");
+       }
+       catch (Exception e) {
+        System.out.println("Error al mostrar las categorías: " + e.getMessage());
+    }
+        
+        
     }
 
 }
