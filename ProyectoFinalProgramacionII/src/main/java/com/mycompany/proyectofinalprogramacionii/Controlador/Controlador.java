@@ -184,9 +184,91 @@ public class Controlador {
     Mapa m = new Mapa(nombre,favorable,cantidadSites,descripcion);
     mapas.add(m);
     vista.mostrarTexto("Se agrego mapa.");
+    }
     
     // Creamo  el metodo para crear tabla mapa en base de datos
+    public void crearTablaMapaMySql (){
+        //vinculamos el archivo de java con la base de datos inventario.
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        // Creamos las tablas de la base de datos
+        Statement stmt = con.createStatement();
+        
+        String tablaMapas = "CREATE TABLE IF NOT EXISTS Mapa (" +
+                        "id INT PRIMARY KEY AUTO_INCREMENT, " +
+                        "nombre VARCHAR(50) UNIQUE NOT NULL, " +
+                        "favorable VARCHAR(20) NOT NULL, " +
+                        "cantidadSites VARCHAR(10), " +
+                        "descripcion VARCHAR(100)," +
+                        ")";
+        stmt.executeUpdate(tablaMapa);
+        con.close();
+        System.out.println("Tabla creada correctamente.");
+
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
     
+    // Creamos el metodo para guardar los equipos en la base de datos
+    
+    public void guardarMapasEnMysql(){
+        try{
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+            String mysql = "INSERT INTO Mapa (nombre, favorable, cantidadSites, descripcion) VALUES (?, ?, ?, ?)";;
+            PreparedStatement ps = con.prepareStatement(mysql);
+        for (Mapa e : mapas) {
+            ps.setString(1, m.getNombre());
+            ps.setString(2, m.getFavorable());
+            ps.setString(3, m.getCantidadSites());
+            ps.setString(4, m.getDescripcion());
+
+        }
+        con.close();
+        System.out.println("Mapas guardados en la base de datos.");
+
+        }
+        catch(Exception e){
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+    public void mostrarMapasGuardados(){
+        try {
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+            Statement stmt = con.createStatement();
+
+            String sql = "SELECT * FROM Mapa";  // también podés poner solo "categoria"
+            ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("Listado de mapas:");
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String favorable = rs.getString("favorable");
+            String cantidadSites = rs.getString("cantidadSites");
+            String descripcion = rs.getString("descripcion");
+            
+            System.out.println("ID: " + id + " Nombre: " + nombre + "Favorable: " + favorable + " Cantidad Sites: " + cantidadSites + " Descripción: " + descripcion);
+            }
+        rs.close();
+        stmt.close();
+        con.close();
+        }catch (Exception e) {
+            System.out.println("Error al mostrar los mapas: " + e.getMessage());
+            }
+        }
+    }   
+
+        
+            
+            
+    }    
+        
+    
+    
+
+                
+                
+    
+}
 
     
      
