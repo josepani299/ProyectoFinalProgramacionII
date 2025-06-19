@@ -1,4 +1,4 @@
-// crear la clase Personaje. Sus atributos: rol, nombre y descripcion.
+// cree la clase Personaje. Sus atributos: rol, nombre y descripcion.
 public class Personaje {
     private String rol;
     private String nombre;
