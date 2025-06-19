@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.mycompany.proyectofinalprogramacionii.Controlador;
 import com.mycompany.proyectofinalprogramacionii.Modelos.Equipo;
 import com.mycompany.proyectofinalprogramacionii.Modelos.Jugador;
@@ -23,7 +20,9 @@ public class Controlador {
     private List<Torneo> torneos = new ArrayList<>();
     private List<Equipo> equipos = new ArrayList<>();
     private List<Jugador> jugadores = new ArrayList<>();
-    private List<Mapa> mapas = new ArrayList<>(); 
+    private List<Mapa> mapas = new ArrayList<>();
+    private List<Torneo> torneo = new ArrayList<>();
+
     // falta crear las listas de Rol, mapas, personajes
     
     public void menu() {
@@ -56,6 +55,9 @@ public class Controlador {
                     crearMapa();
 
                     
+                    break;
+                case 8: 
+                    crearTorneo();
                     break;
             }
         } while (opcion != 0);
@@ -168,7 +170,7 @@ public class Controlador {
     }
     }
     
-    // Creo el metodo para agregar equipos
+    // Creo el metodo para agregar mapas
     
     public void crearMapa(){
     vista.mostrarTexto("Ingrese nombre del mapa");
@@ -187,7 +189,7 @@ public class Controlador {
     }
     
     // Creamo  el metodo para crear tabla mapa en base de datos
-    public void crearTablaMapaMySql (){
+   /* public void crearTablaMapaMySql (){
         //vinculamos el archivo de java con la base de datos inventario.
         Class.forName("com.mysql.cj.jdbc.Driver");
         Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
@@ -255,27 +257,127 @@ public class Controlador {
             System.out.println("Error al mostrar los mapas: " + e.getMessage());
             }
         }
-    }   
+*/
+       
 
-        
-            
-            
-    }    
-        
-    
-    
+    //creamos meteodo para crear torneo
 
-                
-                
+    public void crearTorneo() {
+    vista.mostrarTexto("Ingrese nombre del torneo:");
+    String nombre = vista.pedirString();
+
+    vista.mostrarTexto("Ingrese ubicación:");
+    String ubicacion = vista.pedirString();
+    
+    Equipo ganador = null;
+    Jugador mvp = null;
+
+    vista.mostrarTexto("Ingrese el premio total del torneo:");
+    double premio = vista.pedirDouble();
+    
+    // metodo para agregar torneo
+    Torneo t = new Torneo(nombre, ubicacion, ganador, mvp, premio);
+    torneo.add(t);
+    vista.mostrarTexto("Se agrego torneo.");
+    }
+    
+    // Creamo  el metodo para crear tabla mapa en base de datos
+    public void crearTablaTorneoMySql (){
+        //vinculamos el archivo de java con la base de datos inventario.
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        // Creamos las tablas de la base de datos
+        Statement stmt = con.createStatement();
+        
+        String tablaTorneos = "CREATE TABLE IF NOT EXISTS Torneo (" +
+                        "id INT PRIMARY KEY AUTO_INCREMENT, " +
+                        "nombre VARCHAR(50) UNIQUE NOT NULL, " +
+                        "Ubicacion VARCHAR(50) NOT NULL, " +
+                        "Ganador VARCHAR(50), " +
+                        "Mvp VARCHAR(100)," +
+                        ")";
+        stmt.executeUpdate(tablaTorneo);
+        con.close();
+        System.out.println("Tabla creada correctamente.");
+
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+    
+    // Creamos el metodo para guardar los equipos en la base de datos
+    
+    public void guardarTorneosEnMysql(){
+        try{
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+            String mysql = "INSERT INTO torneo (nombre, ubicacion, premio_total, id_ganador, id_mvp) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(mysql);
+        for (Torneo t : torneo) {
+            ps.setString(1, m.getNombre());
+            ps.setString(2, m.getFavorable());
+            ps.setString(3, m.getCantidadSites());
+            ps.setString(4, m.getDescripcion());
+
+        }
+        con.close();
+        System.out.println("Torneo guardados en la base de datos.");
+
+        }
+        catch(Exception e){
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+    
+    public void mostrarTorneosGuardados(){
+        try {
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+            Statement stmt = con.createStatement();
+
+            String sql = "SELECT * FROM Torneos";  // también podés poner solo "categoria"
+            ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("Listado de torneos:");
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String ubicacion = rs.getString("ubicacion");
+            double premio = rs.getDouble("premio_total");
+            int idGanador = rs.getInt("id_ganador");
+            int idMvp = rs.getInt("id_mvp");
+
+            
+            System.out.println("ID: " + id + " | Nombre: " + nombre + " | Ubicación: " + ubicacion + " | Premio: $" + premio + " | ID Ganador: " + (rs.wasNull() ? "No asignado" : idGanador) + " | ID MVP: " + (rs.wasNull() ? "No asignado" : idMvp));
+            
+            System.out.println("ID del Equipo Ganador: " + (rs.wasNull() ? "No asignado" : idGanador));
+            System.out.println("ID del MVP: " + (rs.wasNull() ? "No asignado" : idMvp));
+            }
+        rs.close();
+        stmt.close();
+        con.close();
+        }catch (Exception e) {
+            System.out.println("Error al mostrar los mapas: " + e.getMessage());
+            }
+        }
+    
     
 }
+
+       
+            
+   
+        
+    
+    
+
+                
+                
+    
+
 
     
      
     
     
     
-    }
-}
+    
+
 
 
