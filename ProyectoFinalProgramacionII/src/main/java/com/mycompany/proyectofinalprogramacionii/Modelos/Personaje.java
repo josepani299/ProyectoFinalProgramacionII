@@ -43,7 +43,7 @@ public class Personaje {
                 ", descripcion='" + descripcion + '\'' +
                 '}';
     }
-// los metodos: +crearPersonaje() +actualizarDatos()
+// los metodos:
     public void crearPersonaje(String rol, String nombre, String descripcion) {
         this.rol = rol;
         this.nombre = nombre;
