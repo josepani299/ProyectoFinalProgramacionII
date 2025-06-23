@@ -3,19 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.proyectofinalprogramacionii.Controlador;
-import com.mycompany.proyectofinalprogramacionii.Modelos.Equipo;
-import com.mycompany.proyectofinalprogramacionii.Modelos.Jugador;
-import com.mycompany.proyectofinalprogramacionii.Modelos.Torneo;
-import com.mycompany.proyectofinalprogramacionii.Vista.Vista;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mycompany.proyectofinalprogramacionii.Modelos.Equipo;
+import com.mycompany.proyectofinalprogramacionii.Modelos.Jugador;
+import com.mycompany.proyectofinalprogramacionii.Modelos.Torneo;
+import com.mycompany.proyectofinalprogramacionii.Vista.Vista;
 
 
 public class Controlador {
@@ -91,7 +92,7 @@ public class Controlador {
         
     }
     
-    // Creamos el metodo para crear la tabla equipo en la base de datos
+    // Creamos el método para crear la tabla equipo en la base de datos
     
     public void crearTablaEquipoEnMySql(){
         try {
@@ -171,7 +172,7 @@ public class Controlador {
     }
     }
     
-    // Creamos el metodo para que la informacion de los equipos de la base de datos siempre ente cuando se ejecute el programa
+    //creamos el método para que los datos que hay en los equipos de la base de datos no se elimine cuando reniciamos el pograma
     
     public void traerEquiposBD(List<Equipo> equipos){
        try
@@ -210,7 +211,7 @@ public class Controlador {
     
     
     
-    // Creamos el metodo para crear jugadores y guardalo en la lista.
+    // Creamos el método para crear jugadores y guardalo en la listita
     public void crearJugador(){
         
         vista.mostrarTexto("Ingrese el nombre del Jugador");
@@ -240,9 +241,418 @@ public class Controlador {
         
     }
     
-    //Creamos el metodo para mostrar jugadores de la lista
-    
-    
+    //méetodo para mostrar jugadores de la lista
+    public void mostrarJugadores(){
+        if (jugadores.isEmpty()) { //lista vacia
+            vista.mostrarTexto("No hay jugadores registrados.");
+        } else {
+            vista.mostrarTexto("Lista de jugadores:");
+            for (Jugador j : jugadores) {
+                vista.mostrarTexto(j.toString());
+            }
+        }
+
+    }
+
+
+// Crear la tabla de jugadores en la base de datos
+public void crearTablaJugadorEnMySql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+        String tablaJugador = "CREATE TABLE IF NOT EXISTS Jugador (" +
+                    "id int PRIMARY KEY AUTO_INCREMENT, " +
+                    "nombre VARCHAR(50) not null," +
+                    "apellido varchar(50) not null,"+
+                    "tag varchar(50) unique not null,"+
+                    "fecha Date not null,"+
+                    "precio double not null,"+
+                    "kills int not null,"+
+                    "asistencia int not null,"+
+                    "dead int not null)";
+        stmt.executeUpdate(tablaJugador);
+        con.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }   
+
+    }
+
+// creamos la tabla de rol en la base de datos
+public void crearTablaRolEnMySql(){ 
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+        String tablaRol = "CREATE TABLE IF NOT EXISTS Rol (" +
+                     "id int PRIMARY KEY AUTO_INCREMENT, " +
+                     "nombre VARCHAR(50) unique not null," +
+                     "descripcion varchar(100) not null)";
+        stmt.executeUpdate(tablaRol);
+        con.close();    
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }   
 }
 
+// Guardamos los jugadores en la base de datos
+public void guardarJugadoresEnMysql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        String mysql = "INSERT IGNORE INTO Jugador (nombre,apellido,tag,fecha,precio,kills,asistencia,dead) VALUES (?,?,?,?,?,?,?,?)"; //se guarda en cada posición de ? 
+        PreparedStatement ps = con.prepareStatement(mysql);
+        for (Jugador j : jugadores) {
+            ps.setString(1, j.getNombre());
+            ps.setString(2, j.getApellido());
+            ps.setString(3, j.getTag());
+            ps.setDate(4, java.sql.Date.valueOf(j.getFechaAlta()));
+            ps.setDouble(5, j.getPrecio());
+            ps.setInt(6, j.getKills());
+            ps.setInt(7, j.getAsistencia());
+            ps.setInt(8, j.getDead());
+            ps.executeUpdate();
+        }
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+    System.out.println("Jugadores guardados en la base de datos.");
+    }
+// Traemos los jugadores de la base de datos
+public void traerJugadoresBD(List<Jugador> jugadores){
+    try {
+        vista.mostrarTexto("Iniciando sistema");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM jugador";
+        ResultSet rs = stmt.executeQuery(sql);  
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String apellido = rs.getString("apellido");
+            String tag = rs.getString("tag");
+            Date fecha = rs.getDate("fecha");
+            double precio = rs.getDouble("precio");
+            int kills = rs.getInt("kills");
+            int asistencia = rs.getInt("asistencia");
+            int dead = rs.getInt("dead");
+            LocalDate fechaLD = fecha.toLocalDate();
+            
+            Jugador j = new Jugador(nombre, apellido, tag, fechaLD, precio, kills, asistencia, dead);
+            jugadores.add(j);
+        }
+        rs.close();
+        stmt.close();   
+        con.close();
+        vista.mostrarTexto("El sistema se inicio correctamente");
+    } catch (Exception e) {
+        System.out.println("Error al mostrar los jugadores: " + e.getMessage());
+    }
+}   
+// Creamos la tabla de mapa en la base de datos
+public void crearTablaMapaEnMySql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");    
+        Statement stmt = con.createStatement();
+        String tablaMapa = "CREATE TABLE IF NOT EXISTS Mapa (" +
+                     "id int PRIMARY KEY AUTO_INCREMENT, " +
+                     "nombre VARCHAR(50) unique not null," +
+                     "descripcion varchar(100) not null)";  
+        stmt.executeUpdate(tablaMapa);
+        con.close();    
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+}
+// Guardamos los mapas en la base de datos
+public void guardarMapasEnMysql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");            
+        String mysql = "INSERT IGNORE INTO Mapa (nombre,descripcion) VALUES (?,?)"; //se guarda en cada posición de ?
+        PreparedStatement ps = con.prepareStatement(mysql);
+        for (Equipo e : equipos) {
+            ps.setString(1, e.getNombre());
+            ps.setString(2, e.getPais());
+            ps.executeUpdate();
+        }
+        ps.close();
+        con.close();
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+}   
+// Traemos los mapas de la base de datos
+public void traerMapasBD(List<Equipo> equipos){
+    try {
+        vista.mostrarTexto("Iniciando sistema");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();         
+        String sql = "SELECT * FROM mapa";
+        ResultSet rs = stmt.executeQuery(sql);      
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String descripcion = rs.getString("descripcion");
+            
+            Equipo e = new Equipo(nombre, descripcion);
+            equipos.add(e);
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        vista.mostrarTexto("El sistema se inicio correctamente");
+    } catch (Exception e) {
+        System.out.println("Error al mostrar los mapas: " + e.getMessage());
+    }
+}
+// Creamos la tabla de torneo en la base de datos
+public void crearTablaTorneoEnMySql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+        String tablaTorneo = "CREATE TABLE IF NOT EXISTS Torneo (" +
+                        "id int PRIMARY KEY AUTO_INCREMENT, " +
+                        "nombre VARCHAR(50) unique not null," +
+                        "fecha Date not null," +
+                        "premio double not null," +
+                        "cantidadEquipos int not null)";    
+        stmt.executeUpdate(tablaTorneo);
+        con.close();
+    } catch (Exception e) {
 
+        System.out.println("Error: " + e.getMessage());
+    }
+}
+// Guardamoss los torneos en la base de datos  
+public void guardarTorneosEnMysql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        String mysql = "INSERT IGNORE INTO Torneo (nombre,fecha,premio,cantidadEquipos) VALUES (?,?,?,?)"; //se guarda en cada posición de ?
+        PreparedStatement ps = con.prepareStatement(mysql);
+        for (Torneo t : torneos) {
+            ps.setString(1, t.getNombre());
+            ps.setDate(2, java.sql.Date.valueOf(t.getFecha()));
+            ps.setDouble(3, t.getPremio());
+            ps.setInt(4, t.getCantidadEquipos());
+            ps.executeUpdate();
+        }
+        ps.close();
+        con.close();
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+}   
+// Traemos los torneos de la base de datos
+public void traerTorneosBD(List<Torneo> torneos){
+
+    try {
+        vista.mostrarTexto("Iniciando sistema");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BD
+Proyecto", "root", "Admin123!");
+
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM torneo";
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            Date fecha = rs.getDate("fecha");
+            double premio = rs.getDouble("premio");
+            int cantidadEquipos = rs.getInt("cantidadEquipos");
+            LocalDate fechaLD = fecha.toLocalDate();
+            
+            Torneo t = new Torneo(nombre, fechaLD, premio, cantidadEquipos);
+            torneos.add(t);
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        vista.mostrarTexto("El sistema se inicio correctamente");
+    } catch (Exception e) {
+        System.out.println("Error al mostrar los torneos: " + e.getMessage());
+    }
+}   
+}   
+
+// creamos la tabla de personajes en la base de datos
+public void crearTablaPersonajeEnMySql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+        String tablaPersonaje = "CREATE TABLE IF NOT EXISTS Personaje (" +
+                        "id int PRIMARY KEY AUTO_INCREMENT, " +
+                        "nombre VARCHAR(50) unique not null," +
+                        "edad int not null," +
+                        "clase VARCHAR(50) not null," +
+                        "nivel int not null)";    
+        stmt.executeUpdate(tablaPersonaje);
+        con.close();
+    } catch (Exception e) {
+
+        System.out.println("Error: " + e.getMessage());
+    }
+}
+// Guardamos los personajes en la base de datos
+public void guardarPersonajesEnMysql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+
+        String mysql = "INSERT IGNORE INTO Personaje (nombre,edad,clase,nivel) VALUES (?,?,?,?)"; //se guarda en cada posición de ?
+        PreparedStatement ps = con.prepareStatement(mysql);             
+        for (Personaje p : personajes) {
+            ps.setString(1, p.getNombre());
+            ps.setInt(2, p.getEdad());
+            ps.setString(3, p.getClase());
+            ps.setInt(4, p.getNivel());
+            ps.executeUpdate();
+        }
+        ps.close();
+        con.close();
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+}
+// Traemos los personajes de la base de datos
+public void traerPersonajesBD(List<Personaje> personajes){
+    try {
+        vista.mostrarTexto("Iniciando sistema");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM personaje";
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            int edad = rs.getInt("edad");
+            String clase = rs.getString("clase");
+            int nivel = rs.getInt("nivel");
+            
+            Personaje p = new Personaje(nombre, edad, clase, nivel);
+            personajes.add(p);
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        vista.mostrarTexto("El sistema se inicio correctamente");
+    } catch (Exception e) {
+        System.out.println("Error al mostrar los personajes: " + e.getMessage());
+    }
+}
+
+// Creamos la tabla de rol en la base de datos
+public void crearTablaRolEnMySql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");    
+        Statement stmt = con.createStatement();
+        String tablaRol = "CREATE TABLE IF NOT EXISTS Rol (" +
+                        "id int PRIMARY KEY AUTO_INCREMENT, " +
+                        "nombre VARCHAR(50) unique not null," +
+                        "descripcion varchar(100) not null)";
+        stmt.executeUpdate(tablaRol);
+        con.close();
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+}
+// Guardamos los roles en la base de datos
+public void guardarRolesEnMysql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        String mysql = "INSERT IGNORE INTO Rol (nombre,descripcion) VALUES (?,?)"; 
+        PreparedStatement ps = con.prepareStatement(mysql);
+        for (Rol r : roles) {
+            ps.setString(1, r.getNombre());
+            ps.setString(2, r.getDescripcion());
+            ps.executeUpdate();
+        }
+        ps.close();
+        con.close();
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+}
+// Traemos los roles de la base de datos
+public void traerRolesBD(List<Rol> roles){
+    try {
+        vista.mostrarTexto("Iniciando sistema");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM rol";
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String descripcion = rs.getString("descripcion");
+            
+            Rol r = new Rol(nombre, descripcion);
+            roles.add(r);
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        vista.mostrarTexto("El sistema se inicio correctamente");
+    } catch (Exception e) {
+        System.out.println("Error al mostrar los roles: " + e.getMessage());
+    }
+}
+// Creamos la tabla de personaje en la base de datos
+public void crearTablaPersonajeEnMySql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+        String tablaPersonaje = "CREATE TABLE IF NOT EXISTS Personaje (" +  
+                        "id int PRIMARY KEY AUTO_INCREMENT, " +
+                        "nombre VARCHAR(50) unique not null," +
+                        "edad int not null," +
+                        "clase VARCHAR(50) not null," +
+                        "nivel int not null)";
+        stmt.executeUpdate(tablaPersonaje);
+        con.close();
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+}
+// Guardamos los personajes en la base de datos
+public void guardarPersonajesEnMysql(){
+    try {
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");    
+        String mysql = "INSERT IGNORE INTO Personaje (nombre,edad,clase,nivel) VALUES (?,?,?,?)"; //se guarda en cada posición de ?
+        PreparedStatement ps = con.prepareStatement(mysql);
+        for (Personaje p : personajes) {
+            ps.setString(1, p.getNombre());
+            ps.setInt(2, p.getDescripcion());
+            ps.setString(3, p.getRol());
+            ps.executeUpdate();
+
+        }
+        ps.close();
+        con.close();
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
+    }
+    System.out.println("Personajes guardados en la base de datos.");
+}
+// Traemos los personajes de la base de datos   
+public void traerPersonajesBD(List<Personaje> personajes){
+    try {
+        vista.mostrarTexto("Iniciando sistema");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
+        String sql = "SELECT * FROM personaje";
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String clase = rs.getString("Descripcion");
+            String rol = rs.getString("rol");
+
+            Personaje p = new Personaje(nombre, descripcion, rol);
+            personajes.add(p);
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        vista.mostrarTexto("El sistema se inicio correctamente");
+    } catch (Exception e) {
+        System.out.println("Error al mostrar los personajes: " + e.getMessage());
+    }
+}   
+}
