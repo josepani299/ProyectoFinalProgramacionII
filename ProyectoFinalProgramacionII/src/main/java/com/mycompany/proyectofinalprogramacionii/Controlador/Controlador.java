@@ -425,7 +425,7 @@ public void crearTablaTorneoEnMySql(){
 public void guardarTorneosEnMysql(){
     try {
         Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
-        String mysql = "INSERT IGNORE INTO Torneo (nombre,fecha,premio,cantidadEquipos) VALUES (?,?,?,?)"; //se guarda en cada posición de ?
+        String mysql = "INSERT IGNORE INTO Torneo (nombre,fecha,premio,cantidadEquipos) VALUES (?,?,?,?)"; 
         PreparedStatement ps = con.prepareStatement(mysql);
         for (Torneo t : torneos) {
             ps.setString(1, t.getNombre());
