@@ -614,7 +614,7 @@ public void crearTablaPersonajeEnMySql(){
 public void guardarPersonajesEnMysql(){
     try {
         Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");    
-        String mysql = "INSERT IGNORE INTO Personaje (nombre,edad,clase,nivel) VALUES (?,?,?,?)"; //se guarda en cada posición de ?
+        String mysql = "INSERT IGNORE INTO Personaje (nombre,edad,clase,nivel) VALUES (?,?,?,?)"; 
         PreparedStatement ps = con.prepareStatement(mysql);
         for (Personaje p : personajes) {
             ps.setString(1, p.getNombre());
