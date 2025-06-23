@@ -1,9 +1,6 @@
-<<<<<<< HEAD
+
 package com.mycompany.proyectofinalprogramacionii.Modelos;
-// crear la clase Personaje. Sus atributos: rol, nombre y descripcion.
-=======
-// cree la clase Personaje. Sus atributos: rol, nombre y descripcion.
->>>>>>> 2d32b7dd370b2c756be62629783a2f423c277429
+
 public class Personaje {
     private String rol;
     private String nombre;
