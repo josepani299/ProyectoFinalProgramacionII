@@ -22,7 +22,6 @@ import java.sql.Date;
 public class Controlador {
 
     private Vista vista;
-    private List<Torneo> torneos = new ArrayList<>();
     private List<Equipo> equipos = new ArrayList<>();
     private List<Jugador> jugadores = new ArrayList<>();
     private List<Mapa> mapas = new ArrayList<>();
@@ -32,7 +31,7 @@ public class Controlador {
 
 
     public List<Equipo> getEquipos() {
-        return equipos;
+        return this.equipos;
     }
 
     // falta crear las listas de Rol, mapas, personajes
@@ -128,7 +127,7 @@ public class Controlador {
     public void guardarEquiposEnMysql() {
         try {
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
-            String mysql = "INSERT INTO EQUIPO (nombre,pais, fecha,coach,cantidadGanados) VALUES (?,?,?,?,?)";
+            String mysql = "INSERT IGNORE INTO EQUIPO (nombre,pais, fecha,coach,cantidadGanados) VALUES (?,?,?,?,?)";
             PreparedStatement ps = con.prepareStatement(mysql);
 
             for (Equipo e : equipos) {
@@ -176,31 +175,41 @@ public class Controlador {
 
     // Creamos el metodo para traer a el programa los datos guardados en la base de datos
 
-    public void traerEquiposBD(List<Equipo> equipos) {
-        try {
-            vista.mostrarTexto("Iniciando sistema");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
-            Statement stmt = con.createStatement();
+    
+    public void traerEquiposBD(List<Equipo> equipos){
+       try
+       {
+        vista.mostrarTexto("Iniciando sistema");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
+        Statement stmt = con.createStatement();
 
-            String sql = "SELECT * FROM equipo";  // también podés poner solo "categoria"
-            ResultSet rs = stmt.executeQuery(sql);
+        String sql = "SELECT * FROM equipo";  
+        ResultSet rs = stmt.executeQuery(sql);
 
-            System.out.println("Listado de equipos:");
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String nombre = rs.getString("nombre");
-                Date fecha = rs.getDate("fecha");
-                String coach = rs.getString("coach");
-                int cantidad = rs.getInt("cantidadGanados");
-                System.out.println("ID Equipo: " + id + ",  Nombre: " + nombre + ", Fecha Creacion : " + fecha + ", Nombre coach: " + coach + " Cantidad Ganados: " + cantidad);
-            }
-            rs.close();
-            stmt.close();
-            con.close();
-        } catch (Exception e) {
-            System.out.println("Error al mostrar las categorías: " + e.getMessage());
-        }}
-
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String nombre = rs.getString("nombre");
+            String pais = rs.getString("pais");
+            Date fecha = rs.getDate("fecha");
+            String coach = rs.getString("coach");
+            int cantidadGanados = rs.getInt("cantidadGanados");
+            
+            LocalDate fechaLD = fecha.toLocalDate();
+            
+            Equipo e = new Equipo(nombre,pais,fechaLD,coach,cantidadGanados);
+            equipos.add(e);
+            
+        }
+        rs.close();
+        stmt.close();
+        con.close();
+        vista.mostrarTexto("El sistema s einicio correctamente");
+       }
+       catch (Exception e) {
+        System.out.println("Error al mostrar las categorías: " + e.getMessage());
+    }
+    }
+        
     // Creamos el metodo para buscar un equipo en la lista por el nombre y retornarlo
 
     public Equipo buscarEquipo(String nombreEquipo){
@@ -247,8 +256,8 @@ public class Controlador {
                     + "id INT PRIMARY KEY AUTO_INCREMENT, "
                     + "nombre VARCHAR(50) UNIQUE NOT NULL, "
                     + "favorable VARCHAR(20) NOT NULL, "
-                    + "cantidadSites VARCHAR(10), "
-                    + "descripcion VARCHAR(100),"
+                    + "cantidadSites int, "
+                    + "descripcion VARCHAR(100)"
                     + ")";
             stmt.executeUpdate(tablaMapas);
             con.close();
@@ -639,7 +648,7 @@ public class Controlador {
                     + "cantidadEquipos int not null,"   
                     + "ganador varchar(50),"
                     + "FOREIGN KEY(mvp) REFERENCES jugador(tag),"
-                    + "FOREIGN KEY(ganador) references equipo(nombre)";
+                    + "FOREIGN KEY(ganador) references equipo(nombre))";
             stmt.executeUpdate(tablaTorneo);
             con.close();
         } catch (Exception e) {

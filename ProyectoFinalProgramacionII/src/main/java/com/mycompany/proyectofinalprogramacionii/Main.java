@@ -14,6 +14,10 @@ public class Main {
         Vista vista = new Vista();
         Controlador controlador = new Controlador(vista);
         controlador.crearTablaEquipoEnMySql();
+        controlador.crearTablaJugadorEnMysql();
+        controlador.crearTablaMapaMySql();
+        controlador.crearTablaRolEnMySql();
+        controlador.crearTablaTorneoEnMySql();
         controlador.traerEquiposBD(controlador.getEquipos());
         controlador.menu();
     }
