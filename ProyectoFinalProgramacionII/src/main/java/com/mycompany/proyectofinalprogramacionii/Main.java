@@ -4,7 +4,7 @@
 
 package com.mycompany.proyectofinalprogramacionii;
 
-import com.mycompany.proyectofinalprogramacionii.Controlador.Controlador;
+import com.mycompany.proyectofinalprogramacionii.controlador.Controlador;
 import com.mycompany.proyectofinalprogramacionii.Vista.Vista;
 
 

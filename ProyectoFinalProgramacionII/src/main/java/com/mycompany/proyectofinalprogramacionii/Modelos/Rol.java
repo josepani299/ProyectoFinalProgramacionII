@@ -1,3 +1,4 @@
+package com.mycompany.proyectofinalprogramacionii.Modelos;
 // clase rol con los atribuutos: tipoRol y descripcionRol
 public class Rol {
     private String tipoRol;
