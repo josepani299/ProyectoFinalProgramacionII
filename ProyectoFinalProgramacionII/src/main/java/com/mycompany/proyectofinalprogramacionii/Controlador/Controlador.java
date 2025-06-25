@@ -16,6 +16,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Date;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -25,7 +29,7 @@ public class Controlador {
     private List<Equipo> equipos = new ArrayList<>();
     private List<Jugador> jugadores = new ArrayList<>();
     private List<Mapa> mapas = new ArrayList<>();
-    private List<Torneo> torneo = new ArrayList<>();
+    private List<Torneo> torneos = new ArrayList<>();
     private List<Rol> roles = new ArrayList<>();
     private List<Personaje> personajes = new ArrayList<>();
 
@@ -34,41 +38,163 @@ public class Controlador {
         return this.equipos;
     }
 
-    // falta crear las listas de Rol, mapas, personajes
+   
     public void menu() {
-        int opcion;
-        do {
-            vista.menu();
-            opcion = vista.pedirInt();
-            switch (opcion) {
-                case 1:
-                    crearEquipo();
-                    break;
-                case 2:
-                    guardarEquiposEnMysql();
-                    break;
-                case 3:
-                    mostrarEquipoGuardados();
-                    break;
-                case 4:
+    int opcion;
+    do {
+        vista.menu();
+        opcion = vista.pedirInt();
 
-                    break;
-                case 5:
+        switch (opcion) {
+            case 1:
+                // Equipo
+                int opcion1;
+                do {
+                    vista.menuEquipo();
+                    opcion1 = vista.pedirInt();
+                    switch (opcion1) {
+                        case 1:
+                            crearEquipo();
+                            break;
+                        case 2:
+                            guardarEquiposEnMysql();
+                            break;
+                        case 3:
+                            mostrarEquipoGuardados();
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            vista.mostrarTexto("Opcion invalida.");
+                            break;
+                    }
+                } while (opcion1 != 0);
+                break;
 
-                    break;
-                case 6:
+            case 2:
+                // Mapa
+                int opcion2;
+                do {
+                    vista.menuMapa();
+                    opcion2 = vista.pedirInt();
+                    switch (opcion2) {
+                        case 1:
+                            crearMapa();
+                            break;
+                        case 2:
+                            guardarMapasEnMysql();
+                            break;
+                        case 3:
+                            mostrarMapasGuardados();
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            vista.mostrarTexto("Opcion invalida.");
+                            break;
+                    }
+                } while (opcion2 != 0);
+                break;
 
-                    break;
-                case 7:
+            case 3:
+                // Rol
+                int opcion3;
+                do {
+                    vista.menuRol();
+                    opcion3 = vista.pedirInt();
+                    switch (opcion3) {
+                        case 1:
+                            crearRol();
+                            break;
+                        case 2:
+                            guardarRolEnMysql();
+                            break;
+                        case 3:
+                            mostrarRolEnMysql();
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            vista.mostrarTexto("Opcion invalida.");
+                            break;
+                    }
+                } while (opcion3 != 0);
+                break;
 
-                    crearMapa();
-                    break;
-                case 8:
-                    crearTorneo();
-                    break;
-            }
-        } while (opcion != 0);
-    }
+            case 4:
+                // Jugador
+                int opcion4;
+                do {
+                    vista.menuJugador(); // Corregido
+                    opcion4 = vista.pedirInt();
+                    switch (opcion4) {
+                        case 1:
+                            crearJugador();
+                            break;
+                        case 2:
+                            guardarJugadorEnMysql();
+                            break;
+                        case 3:
+                            mostrarJugadorDeMysql();
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            vista.mostrarTexto("Opcion invalida.");
+                            break;
+                    }
+                } while (opcion4 != 0);
+                break;
+
+            case 5:
+                // Torneo
+                int opcion5;
+                do {
+                    vista.menuTorneo();
+                    opcion5 = vista.pedirInt();
+                    switch (opcion5) {
+                        case 1:
+                            crearTorneo();
+                            break;
+                        case 2:
+                            guardarTorneosEnMysql();
+                            break;
+                        case 3:
+                            mostrarTorneosGuardados();
+                            break;
+                        case 4:
+                            Equipo e1 = seleccionarEquipoDeLista(equipos);
+                            Equipo e2 = seleccionarEquipoDeLista(equipos);
+                            if (e1 != null && e2 != null) {
+                                simularEnfrentamientoEstimacion(e1, e2);
+                            }
+                            break;
+                        case 5:
+                            Torneo t = seleccionarTorneoDeLista(torneos);
+                            if (t != null) {
+                                simularTorneo(t);
+                            }
+                            break;
+                        case 0:
+                            break;
+                        default:
+                            vista.mostrarTexto("Opcion invalida.");
+                            break;
+                    }
+                } while (opcion5 != 0);
+                break;
+
+            case 0:
+                vista.mostrarTexto("Saliendo del sistema...");
+                break;
+
+            default:
+                vista.mostrarTexto("Opcion invalida.");
+                break;
+        }
+    } while (opcion != 0);
+}
+
 
     public Controlador(Vista vista) {
         this.vista = vista;
@@ -252,12 +378,12 @@ public class Controlador {
             // Creamos las tablas de la base de datos
             Statement stmt = con.createStatement();
 
-            String tablaMapas = "CREATE TABLE IF NOT EXISTS Mapa ("
+            String tablaMapas = "CREATE TABLE IF NOT EXISTS mapa ("
                     + "id INT PRIMARY KEY AUTO_INCREMENT, "
                     + "nombre VARCHAR(50) UNIQUE NOT NULL, "
-                    + "favorable VARCHAR(20) NOT NULL, "
+                    + "favorable VARCHAR(50) NOT NULL, "
                     + "cantidadSites int, "
-                    + "descripcion VARCHAR(100)"
+                    + "descripcion VARCHAR(800)"
                     + ")";
             stmt.executeUpdate(tablaMapas);
             con.close();
@@ -272,15 +398,18 @@ public class Controlador {
     public void guardarMapasEnMysql() {
         try {
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/BDProyecto", "root", "Admin123!");
-            String mysql = "INSERT IGNORE INTO Mapa (nombre,descripcion) VALUES (?,?)"; //se guarda en cada posición de ?
+            String mysql = "INSERT IGNORE INTO mapa (nombre,favorable,cantidadSites,descripcion) VALUES (?,?)"; //se guarda en cada posición de ?
             PreparedStatement ps = con.prepareStatement(mysql);
-            for (Equipo e : equipos) {
-                ps.setString(1, e.getNombre());
-                ps.setString(2, e.getPais());
+            for (Mapa m : mapas) {
+                ps.setString(1, m.getNombre());
+                ps.setString(2, m.getFavorable());
+                ps.setInt(3,m.getCantidadSites());
+                ps.setString(4, m.getDescripcion());
                 ps.executeUpdate();
             }
             ps.close();
             con.close();
+            vista.mostrarTexto("Se guardo con exito los mapas");
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -629,7 +758,7 @@ public class Controlador {
 
         // metodo para agregar torneo
         Torneo t = new Torneo(nombre, ubicacion, ganador, mvp, premio,fechaLD);
-        torneo.add(t);
+        torneos.add(t);
         vista.mostrarTexto("Se agrego torneo.");
     }
 
@@ -694,7 +823,7 @@ public class Controlador {
         String mysql = "INSERT INTO torneo (ubicacion, mvp, nombre, fecha, premio, cantidadEquipos, ganador) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = con.prepareStatement(mysql);
 
-        for (Torneo t : torneo) {
+        for (Torneo t : torneos) {
             ps.setString(1, t.getUbicacion());
             ps.setString(2, t.getMvp() != null ? t.getMvp().getTag() : null);
             ps.setString(3, t.getNombre());
@@ -746,5 +875,159 @@ public class Controlador {
             System.out.println("Error al mostrar los torneos: " + e.getMessage());
         }
     }
+ 
+    // Creamos el metodo para estimar el procentaje de victoria de un equipo
+    
+    public void simularEnfrentamientoEstimacion(Equipo e1, Equipo e2){
+        double kda1 = e1.getJugadoresEquipo().stream().mapToDouble(Jugador::getKda).sum();
+        double kda2 = e2.getJugadoresEquipo().stream().mapToDouble(Jugador::getKda).sum();
+        double total = kda1 + kda2;
+    if (kda1 > kda2) {
+        System.out.println("El equipo " + e1.getNombre() + "gana con un  " + (kda1 * 100)/total );
+    } else if (kda2 > kda1) {
+        System.out.println("El equipo " + e2.getNombre() + "gana con un  " + (kda2 * 100)/total );
+    } else {
+        System.out.println("Los equipos tienen la misma probabiliad de ganar");
+    }
+    }
+    
+    
+    // Creamos el metodo para devolcer el equipo ganador luego de un enfrentamiento
+    
+    public Equipo simularEnfrentamiento(Equipo e1, Equipo e2) {
+        double kda1 = e1.getJugadoresEquipo().stream().mapToDouble(Jugador::getKda).sum();
+        double kda2 = e2.getJugadoresEquipo().stream().mapToDouble(Jugador::getKda).sum();
+
+        if (kda1 > kda2) {
+            System.out.println("El equipo ganador es " + e1.getNombre());
+            return e1;
+        } else if (kda2 > kda1) {
+            System.out.println("El equipo ganador es " + e2.getNombre());
+        } else {
+            System.out.println("El ganador es aleatorio tienen las mismas probabilidades");
+            Equipo e =  Math.random() < 0.5 ? e1 : e2;
+            return e;
+        }
+        return null;
+    }
+    
+    public void simularTorneo(Torneo torneo) {
+    if (torneo.getEquipos().size() < 8) {
+        vista.mostrarTexto("No se puede simular el torneo porque se dispone de pocos equipos");
+        return;
+    }
+
+    // Mezclar equipos para que el emparejamiento sea aleatorio
+    List<Equipo> rondaActual = new ArrayList<>(torneo.getEquipos());
+    Collections.shuffle(rondaActual);
+
+    // Mapa para registrar posiciones: 1 = campeón, ..., 8 = eliminado primera ronda
+    Map<Integer, Equipo> posiciones = new HashMap<>();
+    int posicionActual = rondaActual.size();
+
+    // Simulación de rondas
+    while (rondaActual.size() > 1) {
+        List<Equipo> ganadores = new ArrayList<>();
+        List<Equipo> eliminados = new ArrayList<>();
+
+        for (int i = 0; i < rondaActual.size(); i += 2) {
+            Equipo e1 = rondaActual.get(i);
+            Equipo e2 = rondaActual.get(i + 1);
+
+            // Estimación previa
+            simularEnfrentamientoEstimacion(e1, e2);
+
+            // Resultado final
+            Equipo ganador = simularEnfrentamiento(e1, e2);
+            Equipo perdedor = (ganador == e1) ? e2 : e1;
+
+            ganadores.add(ganador);
+            eliminados.add(perdedor);
+
+            vista.mostrarTexto(" Avanza: " + ganador.getNombre());
+        }
+
+        for (Equipo eliminado : eliminados) {
+            posiciones.put(posicionActual, eliminado);
+            posicionActual--;
+        }
+
+        rondaActual = ganadores;
+    }
+
+    // El último que queda es el campeón
+    Equipo campeon = rondaActual.get(0);
+    posiciones.put(1, campeon);
+    torneo.setGanador(campeon);
+
+    vista.mostrarTexto("El campeón del torneo es: " + campeon.getNombre());
+
+    // MVP del equipo campeón
+    Jugador mvp = campeon.getJugadoresEquipo().stream()
+            .max(Comparator.comparingDouble(Jugador::getKda))
+            .orElse(null);
+
+    torneo.setMvp(mvp);
+    vista.mostrarTexto("MVP del torneo: " + mvp.getNombre() + " con KDA: " + mvp.getKda());
+
+    // Sumar un torneo ganado al campeón
+    campeon.setCantidadDeTorenoGanadador(campeon.getCantidadDeTorenoGanadador() + 1);
+
+    // Mostrar posiciones finales
+    vista.mostrarTexto("Tabla de posiciones del torneo:");
+    for (int i = 1; i <= posiciones.size(); i++) {
+        Equipo eq = posiciones.get(i);
+        if (eq != null) {
+            vista.mostrarTexto(i + "° - " + eq.getNombre());
+        }
+    }
+}
+    
+    public Equipo seleccionarEquipoDeLista(List<Equipo> equipos) {
+    if (equipos == null || equipos.isEmpty()) {
+        vista.mostrarTexto("No hay equipos disponibles.");
+        return null;
+    }
+
+    vista.mostrarTexto("Lista de equipos:");
+    for (int i = 0; i < equipos.size(); i++) {
+        vista.mostrarTexto((i + 1) + ". " + equipos.get(i).getNombre());
+    }
+
+    vista.mostrarTexto("Ingrese el numero del equipo que desea seleccionar:");
+    int opcion = vista.pedirInt();  // Asegurate de tener este método en tu clase `vista`
+
+    if (opcion >= 1 && opcion <= equipos.size()) {
+        return equipos.get(opcion - 1);
+    } else {
+        vista.mostrarTexto("Opción no válida.");
+        return null;
+    }
+}
+    
+    
+    public Torneo seleccionarTorneoDeLista(List<Torneo> torneos) {
+    if (torneos == null || torneos.isEmpty()) {
+        vista.mostrarTexto("No hay torneos disponibles.");
+        return null;
+    }
+
+    vista.mostrarTexto("Lista de torneos:");
+    for (int i = 0; i < torneos.size(); i++) {
+        vista.mostrarTexto((i + 1) + ". " + torneos.get(i).getNombre());
+    }
+
+    vista.mostrarTexto("Ingrese el numero del torneo que desea seleccionar:");
+    int opcion = vista.pedirInt();
+
+    if (opcion >= 1 && opcion <= torneos.size()) {
+        return torneos.get(opcion - 1);
+    } else {
+        vista.mostrarTexto("Opcion no valida.");
+        return null;
+    }
+}
+
+
     
 }

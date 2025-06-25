@@ -9,11 +9,46 @@ public class Vista {
     public void menu(){
         System.out.println("menu");
         // falta llenar con algunas cosas
-        System.out.println("[1] Registra un Equipo");
-        System.out.println("[2] Guardar Equipos cargados en la base de datos");
-        System.out.println("[3] Mostrar Equipos guardados en la base de datos");
-        System.out.println("[4] Registrar Jugador");
+        System.out.println("[1] Equipos");
+        System.out.println("[2] Mapa");
+        System.out.println("[3] Rol");
+        System.out.println("[4] Jugador");
+        System.out.println("[5] Torneo");
     }
+    
+    public void menuEquipo(){
+        System.out.println("[1] Registrar un Equipo");
+        System.out.println("[2] Guardar Equipos en la base de datos");
+        System.out.println("[3] Mostrar Equipos guardados en la base de datos");
+        
+    }
+    
+    public void menuJugador(){
+        System.out.println("[1] Registrar un Jugador");
+        System.out.println("[2] Guardar Jugador en la base de datos");
+        System.out.println("[3] Mostrar Jugadores guardados en la base de datos");
+    }
+    
+    public void menuMapa(){
+        System.out.println("[1] Registrar un Mapa");
+        System.out.println("[2] Guardar Mapas en la base de datos");
+        System.out.println("[3] Mostrar Mapas guardados en la base de datos");
+    }
+    
+    public void menuRol(){
+        System.out.println("[1] Registrar Rol");
+        System.out.println("[2] Guardar Rol en la base de datos");
+        System.out.println("[3] Mostrar Roles guardados en la base de datos");
+    }
+    
+    public void menuTorneo(){
+        System.out.println("[1] Registrar Torneo");
+        System.out.println("[2] Guardar Torneo en la base de datos");
+        System.out.println("[3] Mostrar Torneo guardados en la base de datos");
+        System.out.println("[4] Estimar ganador de un enfrentamiento");
+        System.out.println("[5] Simulador Torneo ");
+    }
+    
    // creamos una instancia de la clase Scanner
     Scanner sc = new Scanner(System.in);
     

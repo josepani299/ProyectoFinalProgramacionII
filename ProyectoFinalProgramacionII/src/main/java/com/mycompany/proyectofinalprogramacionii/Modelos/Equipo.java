@@ -36,6 +36,14 @@ public class Equipo {
         return fechaCreacion;
     }
 
+    public List<Jugador> getJugadoresEquipo() {
+        return jugadoresEquipo;
+    }
+
+    public void setCantidadDeTorenoGanadador(int cantidadDeTorenoGanadador) {
+        this.cantidadDeTorenoGanadador = cantidadDeTorenoGanadador;
+    }
+
     
 
     public List<Torneo> getTorneosJugados() {

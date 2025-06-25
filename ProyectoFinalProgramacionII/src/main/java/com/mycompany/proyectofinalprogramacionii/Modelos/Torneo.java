@@ -16,6 +16,10 @@ public class Torneo {
     private LocalDate fecha;
     private double premioTotal;
     private List<Equipo> equipos = new ArrayList<>();
+
+    public void setGanador(Equipo ganador) {
+        this.ganador = ganador;
+    }
     
     
     
